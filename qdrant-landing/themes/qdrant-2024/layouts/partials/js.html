@@ -49,6 +49,14 @@
 {{ $indexJs := resources.Get "/js/index.js" | js.Build | minify | resources.Fingerprint "sha512" }}
 <script src="{{ $indexJs.RelPermalink }}"></script>
 
+{{ if .HasShortcode "chart" }}
+  <!--Chart hover affordances. The generated SVG is complete without this file,
+      so it is purely additive; gate on the shortcode rather than the section,
+      since only a handful of blog/articles pages actually embed a chart.-->
+  {{ $vizJs := resources.Get "/js/viz.js" | js.Build | minify | resources.Fingerprint "sha512" }}
+  <script src="{{ $vizJs.RelPermalink }}" defer></script>
+{{ end }}
+
 {{/* Content islands: behavior half. The shell CSS is loaded from css.html.
      Gated on `.HasShortcode "island"` so it ships only on pages with an island. */}}
 {{ if .HasShortcode "island" }}
@@ -89,6 +97,16 @@
   <script src="{{ $catalogFiltersJs.RelPermalink }}"></script>
 {{ end }}
 
+{{ if eq .Path "/documentation/guides-tab" }}
+  {{ $guideDirectoryJs := resources.Get "js/guide-directory.js" | js.Build | minify | resources.Fingerprint "sha512" }}
+  <script src="{{ $guideDirectoryJs.RelPermalink }}"></script>
+{{ end }}
+
+{{ if eq .Layout "examples" }}
+  {{ $exampleLibraryJs := resources.Get "js/example-library.js" | js.Build | minify | resources.Fingerprint "sha512" }}
+  <script src="{{ $exampleLibraryJs.RelPermalink }}"></script>
+{{ end }}
+
 {{ if eq .Section "industries" }}
   {{ $customersJs := resources.Get "js/industries.js" | js.Build | minify | resources.Fingerprint "sha512" }}
   <script src="{{ $customersJs.RelPermalink }}"></script>
@@ -123,6 +141,9 @@
 
   {{ $langSwitcherJs := resources.Get "/js/lang-switcher.js" | js.Build | minify | resources.Fingerprint "sha512" }}
   <script src="{{ $langSwitcherJs.RelPermalink }}"></script>
+
+  {{ $deploymentSwitcherJs := resources.Get "/js/deployment-switcher.js" | js.Build | minify | resources.Fingerprint "sha512" }}
+  <script src="{{ $deploymentSwitcherJs.RelPermalink }}"></script>
 
   <!-- MathJax support -->
   <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
